@@ -1,0 +1,14 @@
+C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\bin\Debug\AwsStorypodPrototype.exe.config
+C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\bin\Debug\AwsStorypodPrototype.exe
+C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\bin\Debug\AwsStorypodPrototype.pdb
+C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\bin\Debug\AWSSDK.Core.dll
+C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\bin\Debug\AWSSDK.EC2.dll
+C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\bin\Debug\AWSSDK.S3.dll
+C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\bin\Debug\AWSSDK.SimpleDB.dll
+C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\bin\Debug\AWSSDK.Core.xml
+C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\bin\Debug\AWSSDK.EC2.xml
+C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\bin\Debug\AWSSDK.SimpleDB.xml
+C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\bin\Debug\AWSSDK.S3.xml
+C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\obj\Debug\AwsStorypodPrototype.csprojResolveAssemblyReference.cache
+C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\obj\Debug\AwsStorypodPrototype.exe
+C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\obj\Debug\AwsStorypodPrototype.pdb
