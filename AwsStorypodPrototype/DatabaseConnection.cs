@@ -12,16 +12,29 @@ namespace AwsConsoleApp1
 {
     class DatabaseConnection
     {
-        AmazonDynamoDBClient db;
+        AmazonDynamoDBClient _Db;
+        public AmazonDynamoDBClient Db
+        {
+            get
+            {
+                return _Db;
+            }
+
+            set
+            {
+                _Db = value;
+            }
+        }
+
         public DatabaseConnection()
         {
-            db = new AmazonDynamoDBClient();
+            Db = new AmazonDynamoDBClient();
         }
 
         public void ListCurrentTables()
         {
             Console.WriteLine("\nListing all tables..");
-            ListTablesResponse listOfTableNames = db.ListTables();
+            ListTablesResponse listOfTableNames = Db.ListTables();
             int tableCount = 1;
             foreach (string table in listOfTableNames.TableNames)
             {
@@ -44,6 +57,7 @@ namespace AwsConsoleApp1
             int counter = 0;
             foreach (AttributeDefinition atr in attributes)
             {
+                // First attribute is HASH, second is RANGE
                 if (counter == 0)
                 {
                     schema.Add(new KeySchemaElement(atr.AttributeName, KeyType.HASH));
@@ -59,7 +73,7 @@ namespace AwsConsoleApp1
         }
 
         /// <summary>
-        /// Create a list of attributes for a new table.
+        /// Create a list of up tp two (was originally designed for any amount, could probably reuse later) attributes for a new table.
         /// </summary>
         /// <returns></returns>
         public List<AttributeDefinition> GetAttributes()
@@ -143,7 +157,7 @@ namespace AwsConsoleApp1
         {
             try
             {
-                if (db.ListTables().TableNames.Contains(proposedTableName))
+                if (Db.ListTables().TableNames.Contains(proposedTableName))
                 {
                     Exception e = new Exception("This table already exists!");
                     throw e;
@@ -161,12 +175,38 @@ namespace AwsConsoleApp1
                 newTableReq.ProvisionedThroughput.WriteCapacityUnits = 1;
 
                 CreateTableResponse newTableResponse = new CreateTableResponse();
-                newTableResponse = db.CreateTable(newTableReq);
+                newTableResponse = Db.CreateTable(newTableReq);
             }
             catch (NullReferenceException nre)
             {
                 Console.WriteLine(nre.Message);
             }        
+        }
+
+        /// <summary>
+        /// Get a table based on name
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <returns>Table</returns>
+        public Table GetTable(string tableName)
+        {
+            Table tb;
+            try
+            {
+                tb = Table.LoadTable(Db, tableName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Failed to load table: {0}\n{1}", e.Message, e.StackTrace);
+                return null;
+            }
+
+            return tb;
+        }
+
+        public void AddToTable(Table targetTable, Document doc)
+        {
+
         }
     }
 }

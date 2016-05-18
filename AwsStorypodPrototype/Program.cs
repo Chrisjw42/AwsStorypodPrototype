@@ -45,13 +45,13 @@ namespace AwsConsoleApp1
                     FileInfo file = new FileInfo(@"C:\Users\Chris\Desktop\poppy.jpg");
                     testes.UploadFile(file, testes.SelectBucket());
                 }
-                else if (input.ToUpper() == "D")
+                else if (input.ToUpper() == "D")///////////////////////////////////////////////////////////////////
                 {
                     Console.WriteLine("---Welcome to DynamoDB test---");
                     DatabaseConnection database = new DatabaseConnection();
                     do
                     {
-                        Console.WriteLine("L - List all DB tables\nC - Create a Table\nX - Exit DynamoDB");
+                        Console.WriteLine("L - List all DB tables\nC - Create a Table\nX - Exit DynamoDB\nT - Test");
                         input = Console.ReadLine();
                         
                         if(input.ToUpper() == "L")
@@ -80,7 +80,11 @@ namespace AwsConsoleApp1
                                 Console.WriteLine(e.Message);
                                 Console.WriteLine("\nHere's the stacktrace:\n" + e.StackTrace);
                             }
-                        }                        
+                        }  
+                        else if (input.ToUpper() == "T")
+                        {
+                            DBObjectCreator dbObj = new DBObjectCreator(database);
+                        }                      
                     } while (input.ToUpper() != "X");
                     input = "You'll never see this, man.";
                 }

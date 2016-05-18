@@ -16,3 +16,5 @@ C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStoryp
 C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\obj\Debug\AwsConsoleApp1.csprojResolveAssemblyReference.cache
 C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\obj\Debug\AwsStorypodPrototype.exe
 C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\obj\Debug\AwsStorypodPrototype.pdb
+C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Chris\Dropbox\PROJECT\Storypod\Prototype\AwsStorypodPrototype\AwsStorypodPrototype\bin\Debug\Newtonsoft.Json.xml
