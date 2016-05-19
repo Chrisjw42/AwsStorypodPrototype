@@ -36,33 +36,31 @@ namespace AwsConsoleApp1
         {
             DbConn = dbConn;
             Console.WriteLine("DBObjCreator successfully created");
-            ReadJson(@"../../ExampleData/videoData.json");
+            List<Video> testList = ConvertJsonToObjects(@"../../ExampleData/videoData.json");
+            List<Document> testDocList = GenerateListofDocuments(testList);
         }        
 
         /// <summary>
-        /// Reads JSON from file (will eventually be any source) and returns an array of documents
+        /// Reads JSON from file (will eventually be any source) and returns 
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public List<Document> ReadJson(string fileName)
+        public List<Video> ConvertJsonToObjects(string fileName)
         {
+            // We could potentially pass an Enum specifying the type of data being passed in
             StreamReader sr = null;
-            //StreamWriter sw = null;
             JsonTextReader jsonRdr = null;
-            JsonTextWriter jsonWrt = null;
             string jsonInput;
             JsonSerializer jsSer;
-            List<Video> videosFromDaJAson;
+            List<VideoInfo> videoInfoFromJson; // will need to generalise
 
             try
             {
                 sr = new StreamReader(fileName);
-                //sw = new StreamWriter();
                 jsonRdr = new JsonTextReader(sr);
-                //jsonWrt = new JsonTextWriter(sw);
                 jsonInput = sr.ReadToEnd();
                 jsSer = new JsonSerializer();
-                videosFromDaJAson = JsonConvert.DeserializeObject<List<Video>>(jsonInput);
+                videoInfoFromJson = JsonConvert.DeserializeObject<List<VideoInfo>>(jsonInput);
             }
             catch (Exception e)
             {
@@ -80,37 +78,74 @@ namespace AwsConsoleApp1
                     jsonRdr.Close();
                 }
             }
-            List<Document> docsToReturn = new List<Document>();
 
-            Console.WriteLine("We've come this far");
+            List<Video> videoList = new List<Video>();
 
-            try
+            foreach (VideoInfo vInf in videoInfoFromJson)
             {
-                foreach (Video v in videosFromDaJAson)
+                try
                 {
-
-                    //string json = jsSer.Serialize(jsonWrt, v);
-
-                    Document tmpDoc = null;
-                    try
-                    {
-                        Console.WriteLine(v.Title);
-                        //tmpDoc = Document.FromJson(json);                   
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                        continue;
-                    }
-                    
-                    //docsToReturn.Add(tmpDoc);
+                    Video tmp = new Video();
+                    tmp.Title = vInf.Title;
+                    tmp.User = new User();
+                    videoList.Add(tmp);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("{0}\n{1}", e.Message, e.StackTrace);
                 }
             }
-            catch(Exception e)
+
+            return videoList;
+        }
+
+        /// <summary>
+        /// Generate a List of DB Documents from a List of Objects, will need to be generic.
+        /// </summary>
+        /// <param name="listOfObjects"></param>
+        /// <returns></returns>
+        public List<Document> GenerateListofDocuments(List<Video> listOfObjects)
+        {
+            List<Document> docsToReturn = new List<Document>();
+
+            // Attempt to create a document from each object
+            foreach (Video v in listOfObjects)
             {
-                Console.WriteLine("{0}\n{1}", e.Message, e.StackTrace);
+                try
+                {
+                    docsToReturn.Add(CreateDBDocument(v));
+                }
+                catch (AmazonDynamoDBException e)
+                {
+                    Console.WriteLine("{0}\n{1}", e.Message, e.StackTrace);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("{0}\n{1}", e.Message, e.StackTrace);
+                }
             }
             return docsToReturn;
+        }
+
+        /// <summary>
+        /// Will eventually need to be generic
+        /// </summary>
+        /// <returns></returns>
+        public Document CreateDBDocument(Video obj)
+        {
+            string json = JsonConvert.SerializeObject(obj);
+
+            Document doc = null;
+            try
+            {
+                Console.WriteLine(obj.Title);
+                doc = Document.FromJson(json);
+            }
+            catch (Exception e)
+            {
+                throw new AmazonDynamoDBException(e.Message);
+            }
+            return doc;
         }
 
     }

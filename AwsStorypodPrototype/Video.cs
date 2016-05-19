@@ -6,21 +6,45 @@ namespace AwsConsoleApp1
     // DynamoDB table 'Video'
     class Video
     {
-        // Hash key, comparable to a SQL primary key
-        public ulong Key { get; set; }
-
-        // Potential Range key
-        public string Title { get; set; }
-
-        // DB Property
-        public string CreationDate { get; set; }
-
-        // DB Property
-        public string Creator { get; set; }
-
-        public override string ToString()
+        private string _Title;
+        public string Title
         {
-            return Title + Creator;
+            get
+            {
+                return _Title;
+            }
+            set
+            {
+                _Title = value;
+            }
+        }
+
+        public VideoFile VideoTranscoded
+        {
+            get;
+            set;
+        }
+
+        public VideoFile VideOrginal
+        {
+            get;
+            set;
+        }
+
+        public DateTime DateTime
+        {
+            get;
+            set;
+        }
+
+        public User User
+        {
+            get;
+            set;
+        }
+
+        public Video()
+        {
         }
     }
 }
