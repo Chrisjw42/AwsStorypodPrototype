@@ -3,7 +3,7 @@ using Amazon.DynamoDBv2.DataModel;
 
 namespace AwsConsoleApp1
 {
-    // DynamoDB table 'Video'
+    //[DynamoDBTable("Video")]
     class Video
     {
         private string _Title;

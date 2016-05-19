@@ -32,27 +32,33 @@ namespace AwsConsoleApp1
             }
         }
 
+        // ctor
         public DBObjectCreator(DatabaseConnection dbConn)
         {
             DbConn = dbConn;
             Console.WriteLine("DBObjCreator successfully created");
-            List<Video> testList = ConvertJsonToObjects(@"../../ExampleData/videoData.json");
+        }
+
+        public List<Document> TestMethod()
+        {
+            List<Video> testList = ConvertJsonToVideos(@"../../ExampleData/videoData.json");
             List<Document> testDocList = GenerateListofDocuments(testList);
-        }        
+            return testDocList;
+        }
 
         /// <summary>
         /// Reads JSON from file (will eventually be any source) and returns 
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public List<Video> ConvertJsonToObjects(string fileName)
+        public List<Video> ConvertJsonToVideos(string fileName)
         {
             // We could potentially pass an Enum specifying the type of data being passed in
             StreamReader sr = null;
             JsonTextReader jsonRdr = null;
             string jsonInput;
             JsonSerializer jsSer;
-            List<VideoInfo> videoInfoFromJson; // will need to generalise
+            List<VideoInfo> listVideoInfosFromJson; // will need to generalise
 
             try
             {
@@ -60,7 +66,7 @@ namespace AwsConsoleApp1
                 jsonRdr = new JsonTextReader(sr);
                 jsonInput = sr.ReadToEnd();
                 jsSer = new JsonSerializer();
-                videoInfoFromJson = JsonConvert.DeserializeObject<List<VideoInfo>>(jsonInput);
+                listVideoInfosFromJson = JsonConvert.DeserializeObject<List<VideoInfo>>(jsonInput);
             }
             catch (Exception e)
             {
@@ -79,15 +85,32 @@ namespace AwsConsoleApp1
                 }
             }
 
+            // Dummys for testing
+            int i = 0;
+            User chris = new User();
+            chris.Name = "Chris Williams";
+            User DTrump = new User();
+            DTrump.Name = "Donald Trump";
+
             List<Video> videoList = new List<Video>();
 
-            foreach (VideoInfo vInf in videoInfoFromJson)
+            foreach (VideoInfo vInf in listVideoInfosFromJson)
             {
+                i++;
                 try
                 {
                     Video tmp = new Video();
                     tmp.Title = vInf.Title;
-                    tmp.User = new User();
+                    tmp.DateTime = DateTime.Now;
+                    //if (i % 2 == 0)
+                    //{
+                    //    tmp.User = chris;
+                    //}
+                    //else
+                    //{
+                    //    tmp.User = DTrump;
+                    //}                    
+                    tmp.User = DTrump;
                     videoList.Add(tmp);
                 }
                 catch (Exception e)
@@ -95,7 +118,6 @@ namespace AwsConsoleApp1
                     Console.WriteLine("{0}\n{1}", e.Message, e.StackTrace);
                 }
             }
-
             return videoList;
         }
 
@@ -113,7 +135,7 @@ namespace AwsConsoleApp1
             {
                 try
                 {
-                    docsToReturn.Add(CreateDBDocument(v));
+                    docsToReturn.Add(CreateDBDocumentFromVideo(v));
                 }
                 catch (AmazonDynamoDBException e)
                 {
@@ -128,24 +150,48 @@ namespace AwsConsoleApp1
         }
 
         /// <summary>
-        /// Will eventually need to be generic
+        /// Will probably eventually need to be generic
         /// </summary>
+        /// <param name="vid"></param>
         /// <returns></returns>
-        public Document CreateDBDocument(Video obj)
+        public Document CreateDBDocumentFromVideo(Video vid)
         {
-            string json = JsonConvert.SerializeObject(obj);
+            string json = JsonConvert.SerializeObject(vid);
+
+            Random rng = new Random();
 
             Document doc = null;
             try
             {
-                Console.WriteLine(obj.Title);
+
+                Console.WriteLine(vid.Title);
                 doc = Document.FromJson(json);
+
+                doc["id"] = rng.Next();
+                doc["User"] = vid.User.Name;
+                doc["VideoName"] = vid.Title;
+                doc["DateTime"] = DateTime.Now.ToString();
+                //doc["VideOriginal"] = vid.VideOrginal.Location.ToString() ?? "www.unkownlocation.com";
+                //doc["VideoTranscoded"] = vid.VideoTranscoded.Location.ToString() ?? "www.unkownlocation.com";
             }
             catch (Exception e)
             {
                 throw new AmazonDynamoDBException(e.Message);
             }
             return doc;
+        }
+
+        /// <summary>
+        /// Is this REALLY a good idea? It may just end up creating duplicate video objects. There's also the issue of fully reconstructing the video. Let's look in to the need for this at a later date.
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <returns></returns>
+        public Video CreateVideoFromDBDocument(Document doc)
+        {
+            Video vid = new Video();
+            
+
+            return vid;
         }
 
     }

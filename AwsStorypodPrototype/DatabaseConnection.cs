@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 using Amazon;
 using Amazon.DynamoDBv2;
@@ -31,7 +32,7 @@ namespace AwsConsoleApp1
             Db = new AmazonDynamoDBClient();
         }
 
-        public void ListCurrentTables()
+        public void ListTables()
         {
             Console.WriteLine("\nListing all tables..");
             ListTablesResponse listOfTableNames = Db.ListTables();
@@ -43,6 +44,72 @@ namespace AwsConsoleApp1
                 tableCount++;
             }
             Console.WriteLine("\nFinished!\n");
+        }
+
+        /// <summary>
+        /// List the contents of a chosen table
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="searchTerm"></param>
+        /// <param name="idQuery"></param>
+        public void ListTableObjects(Table table, string searchTerm = "", int idQuery = 0)
+        {
+            // Grab the attributes from the passed table
+            List<AttributeDefinition> attrs = table.Attributes;
+
+            // Search the second attribute in the table
+            ScanFilter filter = new ScanFilter();
+            Console.WriteLine(attrs[0].AttributeName);
+            filter.AddCondition(attrs[0].AttributeName, ScanOperator.GreaterThan, 0); // This allows testing of the id 
+
+            ScanOperationConfig config = new ScanOperationConfig();
+            config.Filter = filter;
+
+            // Selecting the attributes to return
+            //List<string> attrTargets = new List<string>();
+            //attrTargets.Add(attrs[0].AttributeName);
+
+            Search tableSearch = table.Scan(config);
+            List<Document> tableSearchResults = new List<Document>();
+            Console.WriteLine("Attempting to list contents of table: {0}", table.TableName);
+
+            do
+            {
+                if (tableSearch == null)
+                {
+                    Console.WriteLine("No search results!!");
+                    break;
+                }
+                try
+                {
+                    // Search the table, store the results - THIS IS NOT ALL OF THE RESULTS, JUST ONE PAGE
+                    tableSearchResults = (tableSearch.GetNextSet());
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("{0}\n{1}", e.Message, e.StackTrace);
+                    break;
+                }
+
+                foreach (Document doc in tableSearchResults)
+                {
+                    if (searchTerm != "")
+                    {
+                        if (doc["VideoName"].ToString().ToUpper().Contains(searchTerm.ToUpper()) || doc["VideoName"].ToString().ToUpper().Contains(searchTerm.ToUpper()))
+                        {
+                            Console.WriteLine("---");
+                            Console.WriteLine("ID: {0}\nName: {1}", doc["id"], doc["VideoName"]);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("---");
+                        Console.WriteLine("ID: {0}\nName: {1}", doc["id"], doc["VideoName"]);
+                    }
+                }
+                Console.WriteLine();
+
+            } while (!tableSearch.IsDone);
         }
 
         /// <summary>
@@ -68,7 +135,7 @@ namespace AwsConsoleApp1
                 }
                 counter++;
             }
-            Console.WriteLine(schema.Count); 
+            Console.WriteLine(schema.Count);
             return schema;
         }
 
@@ -153,6 +220,10 @@ namespace AwsConsoleApp1
             return attributes;
         }
 
+        /// <summary>
+        /// Create a table, simple takes a name for the time being
+        /// </summary>
+        /// <param name="proposedTableName"></param>
         public void CreateTable(string proposedTableName)
         {
             try
@@ -162,9 +233,6 @@ namespace AwsConsoleApp1
                     Exception e = new Exception("This table already exists!");
                     throw e;
                 }
-
-                // for readability
-
                 CreateTableRequest newTableReq = new CreateTableRequest();
                 // Instantiate an object before applying values.
                 newTableReq.TableName = proposedTableName;
@@ -180,11 +248,11 @@ namespace AwsConsoleApp1
             catch (NullReferenceException nre)
             {
                 Console.WriteLine(nre.Message);
-            }        
+            }
         }
 
         /// <summary>
-        /// Get a table based on name
+        /// Get a table object based on name
         /// </summary>
         /// <param name="tableName"></param>
         /// <returns>Table</returns>
@@ -204,9 +272,23 @@ namespace AwsConsoleApp1
             return tb;
         }
 
-        public void AddToTable(Table targetTable, Document doc)
+        /// <summary>
+        /// Add an object to a table
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="targetTable"></param>
+        public void AddToTable(Document doc, Table targetTable)
         {
-
+            try
+            {
+                Console.WriteLine("Adding Document to Table: {0}, please wait...", targetTable.TableName);
+                //Thread.Sleep(000);
+                targetTable.PutItem(doc);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("{0}\n{1}", e.Message, e.StackTrace);
+            }
         }
     }
 }
